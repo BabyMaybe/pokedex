@@ -37,6 +37,19 @@ body {
 .right-panel {
     padding: 0;
     width: 379px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.panel-row {
+    display: flex;
+    border-bottom: groove #757575 3px;
+}
+
+.panel-row:last-child {
+    border-top: groove #757575 3px;
+    border-bottom: none;
 }
 
 .divider {
@@ -94,6 +107,11 @@ body {
     text-transform: capitalize;
     height: 45px;
     box-sizing: border-box;
+}
+
+.name-no {
+    float: right;
+    text-transform: lowercase;
 }
 
 .pokemon-description {
@@ -154,6 +172,7 @@ body {
     flex-direction: column;
     flex: 1;
     justify-content: space-evenly;
+    background: linear-gradient(14deg, #afafaf 50%, #ffffff 80%, #afafaf 90%);
 }
 
 .stats {
@@ -169,9 +188,28 @@ body {
     text-transform: capitalize;
 }
 
-.panel-row {
+.controls {
     display: flex;
-    border-bottom: groove #757575 3px;
+    justify-content: space-around;
+    padding: 15px;
+}
+
+.button {
+    height: 0;
+    width: 0;
+    border-top: 30px solid transparent;
+    border-bottom: 30px solid transparent;
+}
+
+.prev {
+    border-right: 30px solid white;
+}
+
+.num {
+}
+
+.next {
+    border-left: 30px solid white;
 }
 
 .normal {

@@ -12,7 +12,7 @@ function LeftPanel(props) {
     if (Object.keys(data).length !== 0) {
         return (
             <div className="panel left-panel">
-                <PokemonName name={data.name} />
+                <PokemonName name={data.name} no={props.no} />
                 <PokemonSprite src={data.sprites.front_default} />
                 <PokemonDescription no={props.no} />
             </div>
@@ -23,7 +23,12 @@ function LeftPanel(props) {
 }
 
 function PokemonName(props) {
-    return <div className="pokemon-name screen">{props.name}</div>;
+    return (
+        <div className="pokemon-name screen">
+            {props.name}
+            <span class="name-no">no. {props.no}</span>
+        </div>
+    );
 }
 
 class PokemonDescription extends React.Component {
@@ -79,7 +84,7 @@ class Pokedex extends React.Component {
         super(props);
         this.state = {
             requestRoot: "https://pokeapi.co/api/v2/pokemon/",
-            pokemonIndex: 83,
+            pokemonIndex: 77,
             data: {},
             loading: false
         };
@@ -122,6 +127,7 @@ function RightPanel(props) {
                     <PokemonStats stats={stats} />
                     <PokemonType types={types} />
                 </div>
+                <PokedexControls />
             </div>
         );
     } else {
@@ -164,6 +170,16 @@ function StatLine(props) {
             <span>{props.name}</span>
             {".".repeat(20 - props.name.length)}
             <span>{props.value}</span>
+        </div>
+    );
+}
+
+function PokedexControls(props) {
+    return (
+        <div className="panel-row controls">
+            <div className="prev button" />
+            <div className="num">#</div>
+            <div className="next button" />
         </div>
     );
 }
