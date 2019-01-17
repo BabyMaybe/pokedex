@@ -37,14 +37,15 @@ body {
 .right-panel {
     padding: 0;
     width: 379px;
-    display: flex;
+    /* display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: space-between; */
 }
 
 .panel-row {
     display: flex;
     border-bottom: groove #757575 3px;
+    justify-content: space-evenly;
 }
 
 .panel-row:last-child {
@@ -131,6 +132,12 @@ body {
     background: linear-gradient(15deg, #cad5b5 64%, #dde2d4 70%, #dde2d4 81%, #fff 86%, #dde2d4 89%, #dde2d4 100%);
 }
 
+.pokemon-sprite-small {
+    height: 120px;
+    width: 120px;
+    margin: 3px 0;
+}
+
 /* types */
 .type {
     color: white;
@@ -148,16 +155,19 @@ body {
     align-self: center;
 }
 
-.type-header {
+.panel-header {
     text-transform: capitalize;
     font-size: 1.25em;
     padding: 5px;
-    border-bottom: groove #757575 3px;
     font-family: "Staatliches", cursive;
     letter-spacing: 2px;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(14deg, #460f0f 0, #891313 30%, #b31818 45%, #fd5555 65%, #b31818 95%);
+    border: groove #e61515 3px;
+    border-width: 3px 2px;
+    text-shadow: #fd5555 -1px 1px;
 }
 
 .type-list {
@@ -173,6 +183,7 @@ body {
     flex: 1;
     justify-content: space-evenly;
     background: linear-gradient(14deg, #afafaf 50%, #ffffff 80%, #afafaf 90%);
+    border-top: groove #757575 3px;
 }
 
 .stats {
@@ -188,6 +199,18 @@ body {
     text-transform: capitalize;
 }
 
+.panel-evo {
+    flex-wrap: wrap;
+}
+
+.evo-header {
+    width: 100%;
+    /* background: linear-gradient(14deg, #460f0f 0, #891313 30%, #b31818 45%, #fd5555 65%, #b31818 95%);
+    border: groove #e61515 3px;
+    border-width: 5px 0;
+    text-shadow: #fd5555 -1px 1px; */
+}
+
 .controls {
     display: flex;
     justify-content: space-around;
@@ -195,10 +218,30 @@ body {
 }
 
 .button {
-    height: 0;
-    width: 0;
-    border-top: 30px solid transparent;
-    border-bottom: 30px solid transparent;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: outset rgb(248, 187, 187) 6px;
+    transform: rotate(60deg);
+    background: radial-gradient(
+        circle farthest-corner at 40% 25%,
+        rgb(218, 237, 241) 9%,
+        rgb(124, 214, 237) 20%,
+        rgb(64, 90, 165) 62%,
+        rgb(43, 125, 196) 100%
+    );
+    cursor: pointer;
+}
+
+.button:hover {
+    background: radial-gradient(
+        circle farthest-corner at 40% 25%,
+        rgb(233, 241, 218) 9%,
+        rgb(184, 237, 124) 20%,
+        rgb(64, 165, 106) 62%,
+        rgb(43, 196, 145) 100%
+    );
 }
 
 .prev {
@@ -206,6 +249,7 @@ body {
 }
 
 .num {
+    color: blue;
 }
 
 .next {
