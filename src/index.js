@@ -31,6 +31,7 @@ class Pokedex extends React.Component {
         };
         this.nextPokemon = this.nextPokemon.bind(this);
         this.previousPokemon = this.previousPokemon.bind(this);
+        this.pickPokemon = this.pickPokemon.bind(this);
     }
 
     nextPokemon() {
@@ -41,6 +42,10 @@ class Pokedex extends React.Component {
     previousPokemon() {
         const prev = Math.max(this.state.pokemonIndex - 1, 1);
         this.setState({ pokemonIndex: prev }, this.changePokemon);
+    }
+
+    pickPokemon(no) {
+        this.setState({ pokemonIndex: no }, this.changePokemon);
     }
 
     componentDidMount() {
@@ -79,15 +84,18 @@ class Pokedex extends React.Component {
                     .then(data => {
                         const api = "https://pokeapi.co/api/v2/pokemon/";
                         const first = data.chain;
-                        const second = first.evolves_to[0];
-                        const third = second.evolves_to[0];
+                        let second;
+                        let third;
                         let evos = [];
                         if (first) {
                             const e1 = fetch(`${api}${first.species.name}/`);
                             evos.push(e1);
+                            second = first.evolves_to[0];
                         }
                         if (second) {
                             const e2 = fetch(`${api}${second.species.name}/`);
+                            third = second.evolves_to[0];
+
                             evos.push(e2);
                         }
                         if (third) {
@@ -123,7 +131,8 @@ class Pokedex extends React.Component {
                     sData={sData}
                     evoSprites={this.state.evoSprites}
                     evoNames={this.state.evoNames}
-                    controls={{ next: this.nextPokemon, prev: this.previousPokemon }}
+                    controls={{ next: this.nextPokemon, prev: this.previousPokemon, pick: this.pickPokemon }}
+                    no={this.state.pokemonIndex}
                 />
                 {/* <TypeList /> */}
             </div>
@@ -139,8 +148,6 @@ function LeftPanel(props) {
             <div className="panel left-panel">
                 <PokemonName name={pData.name} no={props.no} />
                 <PokemonSprite src={pData.sprites} />
-                {/* <PokemonSprite src={pData.sprites.front_shiny} /> */}
-                {/* <PokemonSpriteAnimated sprites={pData.sprites} /> */}
                 <PokemonDescription description={props.description} no={props.no} />
             </div>
         );
@@ -164,24 +171,67 @@ class PokemonSprite extends React.Component {
         this.state = {
             front: true,
             shiny: false,
-            female: true
+            female: false
         };
+
+        this.toggleGender = this.toggleGender.bind(this);
+        this.toggleShiny = this.toggleShiny.bind(this);
+        this.toggleFront = this.toggleFront.bind(this);
     }
 
     buildImage() {
         const dir = this.state.front ? "front" : "back";
         const gender = this.state.female ? "_female" : "";
         const shiny = this.state.shiny ? "_shiny" : "_default";
-
+        // console.log(dir + shiny + gender);
         return dir + shiny + gender;
+    }
+
+    toggleGender() {
+        console.log("toggling gender");
+        this.setState({ female: !this.state.female }, () => {
+            if (this.props.src[this.buildImage()]) {
+                return;
+            } else {
+                this.setState({ female: false });
+            }
+        });
+    }
+
+    toggleShiny() {
+        console.log("toggling shiny");
+        this.setState({ shiny: !this.state.shiny }, () => {
+            if (this.props.src[this.buildImage()]) {
+                return;
+            } else {
+                this.setState({ shiny: false });
+            }
+        });
+    }
+
+    toggleFront() {
+        console.log("toggling front");
+        this.setState({ front: !this.state.front }, () => {
+            if (this.props.src[this.buildImage()]) {
+                return;
+            } else {
+                this.setState({ front: false });
+            }
+        });
     }
 
     render() {
         const imgSrc = this.props.src[this.buildImage()] || this.props.src["front_default"];
+        const funcs = { gender: this.toggleGender, front: this.toggleFront, shiny: this.toggleShiny };
         return (
             <div>
                 <img src={imgSrc} alt="pokemon" className="pokemon-sprite" />
-                <SpriteControls />
+                <SpriteControls
+                    funcs={funcs}
+                    gender={this.state.female}
+                    shiny={this.state.shiny}
+                    front={this.state.front}
+                />
             </div>
         );
     }
@@ -189,15 +239,24 @@ class PokemonSprite extends React.Component {
 
 function SpriteControls(props) {
     return (
-        <div class="sprite-controls">
-            <div class="sprite-control sprite-controls-gender">
-                <i class="fas fa-venus" />
+        <div className="sprite-controls">
+            <div
+                className={"sprite-control sprite-controls-gender " + (props.gender ? "sprite-control-selected" : "")}
+                onClick={props.funcs.gender}
+            >
+                <i className="fas fa-venus" />
             </div>
-            <div class="sprite-control sprite-controls-shiny">
+            <div
+                className={"sprite-control sprite-controls-shiny " + (props.shiny ? "sprite-control-selected" : "")}
+                onClick={props.funcs.shiny}
+            >
                 <span>shiny</span>
             </div>
-            <div class="sprite-control sprite-controls-rotate">
-                <i class="fas fa-undo" />
+            <div
+                className={"sprite-control sprite-controls-rotate " + (!props.front ? "sprite-control-selected" : "")}
+                onClick={props.funcs.front}
+            >
+                <i className="fas fa-undo" />
             </div>
         </div>
     );
@@ -258,8 +317,9 @@ function RightPanel(props) {
                 </div>
 
                 <PokemonEvolution evoSprites={props.evoSprites} evoNames={props.evoNames} />
+                <ButtonChrome />
                 <MoveList moves={moves} />
-                <PokedexControls controls={props.controls} />
+                <PokedexControls controls={props.controls} no={props.no} />
             </div>
         );
     } else {
@@ -303,6 +363,7 @@ function PokemonType(props) {
                     return <Type type={type} key={type} />;
                 })}
             </div>
+            {/* <div className="panel-header">Evolutions</div> */}
         </div>
     );
 }
@@ -317,7 +378,7 @@ function PokemonEvolution(props) {
 
     return (
         <div className="panel-row panel-evo">
-            <div className="panel-header evo-header">Evolutions</div>
+            {/* <div className="panel-header evo-header">Evolutions</div> */}
             <PokemonSpriteSmall src={e1} evo="I" name={n1} />
             <PokemonSpriteSmall src={e2} evo="II" name={n2} />
             <PokemonSpriteSmall src={e3} evo="III" name={n3} />
@@ -359,6 +420,22 @@ function PokeBall(props) {
     );
 }
 
+function ButtonChrome(props) {
+    return (
+        <div className="panel-row blue-buttons">
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+            <div className="blue-button" />
+        </div>
+    );
+}
 class MoveList extends React.Component {
     constructor(props) {
         super(props);
@@ -441,9 +518,9 @@ function MovesLoading() {
                 <div className="move-stat">{padStats("PP", "xx", ".", 16)}</div>
             </div>
             <div className="move-right">
-                <div className="move-type">Type: "xxxxx"</div>
+                <div className="move-type">Type: xxxxx</div>
                 {/* <div className="move-status">Status Effect: {status}</div> */}
-                <div className="move-learn">Learn: Lvl "xx"</div>
+                <div className="move-learn">Learn: Lvl xx</div>
             </div>
         </div>
     );
@@ -456,7 +533,7 @@ function MoveEntry(props) {
     const pow = move.power;
     const pp = move.pp;
     const type = move.type.name;
-    //   const status = "" || "---";
+    //   const status = "" || "---";˝
     const lvl = props.lvl;
     // console.log("move ", move);
     return (
@@ -480,6 +557,7 @@ function PokedexControls(props) {
     return (
         <div className="panel-row controls">
             <Button dir="left" onClick={props.controls.prev} />
+            <NumInput no={props.no} func={props.controls.pick} />
             <Button dir="right" onClick={props.controls.next} />
         </div>
     );
@@ -487,6 +565,41 @@ function PokedexControls(props) {
 
 function Button(props) {
     return <div className="button" onClick={props.onClick} />;
+}
+
+class NumInput extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            id: 1
+        };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleClick = this.handleClick.bind(this);
+    }
+
+    handleChange(e) {
+        e.preventDefault();
+        this.setState({ id: e.target.value });
+    }
+
+    handleClick(e) {
+        e.preventDefault();
+        this.props.func(this.state.id);
+    }
+
+    render() {
+        return (
+            <div>
+                <input
+                    type="number"
+                    className="screen num-input"
+                    placeholder={this.props.no}
+                    onChange={this.handleChange}
+                />
+                <div className="submit" onClick={this.handleClick} />
+            </div>
+        );
+    }
 }
 
 function Loading() {
