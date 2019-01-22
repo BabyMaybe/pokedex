@@ -188,7 +188,7 @@ class PokemonSprite extends React.Component {
     }
 
     toggleGender() {
-        console.log("toggling gender");
+        // console.log("toggling gender");
         this.setState({ female: !this.state.female }, () => {
             if (this.props.src[this.buildImage()]) {
                 return;
@@ -199,7 +199,7 @@ class PokemonSprite extends React.Component {
     }
 
     toggleShiny() {
-        console.log("toggling shiny");
+        // console.log("toggling shiny");
         this.setState({ shiny: !this.state.shiny }, () => {
             if (this.props.src[this.buildImage()]) {
                 return;
@@ -210,7 +210,7 @@ class PokemonSprite extends React.Component {
     }
 
     toggleFront() {
-        console.log("toggling front");
+        // console.log("toggling front");
         this.setState({ front: !this.state.front }, () => {
             if (this.props.src[this.buildImage()]) {
                 return;
