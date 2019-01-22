@@ -471,7 +471,7 @@ class MoveList extends React.Component {
     }
 
     nextMove() {
-        const nextIndex = Math.min(this.state.index + 1, this.props.moves.length);
+        const nextIndex = Math.min(this.state.index + 1, this.props.moves.length - 1);
         this.setState({ index: nextIndex }, this.loadMoves);
     }
 
